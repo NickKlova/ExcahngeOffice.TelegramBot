@@ -1,19 +1,14 @@
 ﻿using ExchangeOffice.Application.Attributes;
 using ExchangeOffice.Application.Handlers.Messages.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Bot;
 using ExchangeOffice.Cache.Extensions;
 using Microsoft.AspNetCore.Builder;
 using ExchangeOffice.Application.Managers.Interfaces;
 using ExchangeOffice.Application.Managers;
 using ExchangeOffice.Application.Extensions.Providers.Interfaces;
 using ExchangeOffice.Application.Extensions.Providers;
+using ExchangeOffice.Application.Extensions.Middlewares;
 
 namespace ExchangeOffice.Core.Extensions {
 	public static class ApplicationExtensions {
@@ -34,6 +29,7 @@ namespace ExchangeOffice.Core.Extensions {
 		}
 
 		public static void UseApplicationLayer(this IApplicationBuilder app) {
+			app.UseMiddleware<HandlersMiddleware>();
 			app.UseMiddleware<StepperMiddleware>();
 		}
 	}

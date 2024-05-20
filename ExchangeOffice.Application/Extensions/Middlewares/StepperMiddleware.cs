@@ -19,6 +19,10 @@ public class StepperMiddleware {
 	}
 
 	public async Task InvokeAsync(HttpContext context) {
+		var handlerExecutedHeader = context.Request.Headers.TryGetValue("handlerexecuted", out var isHandlerExecuted);
+		if(!string.IsNullOrEmpty(isHandlerExecuted)) {
+			await _next(context);
+		}
 		context.Request.EnableBuffering();
 		var update = await GetUpdateFromRequest(context.Request.Body);
         if (update == null) {

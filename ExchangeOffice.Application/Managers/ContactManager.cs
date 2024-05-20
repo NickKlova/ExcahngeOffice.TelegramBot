@@ -33,6 +33,7 @@ namespace ExchangeOffice.Application.Managers {
 			value!.CurrentStep++;
 			if (value.CurrentStep > value.StepsCount) {
 				await _cache.DeleteAsync(stringKey);
+				return;
 			}
 			var jsonValue = JsonConvert.SerializeObject(value);
 			await _cache.SetAsync(stringKey, jsonValue);

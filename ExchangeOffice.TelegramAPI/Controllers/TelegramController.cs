@@ -8,28 +8,28 @@ namespace ExchangeOffice.TelegramAPI.Controllers {
 	[Route("api/telegram")]
 	[ApiController]
 	public class TelegramController : ControllerBase {
-		private readonly Dictionary<string, IMessageHandler> _handlers;
-		public TelegramController(IEnumerable<IMessageHandler> handlers) {
-			_handlers = handlers
-				.Select(h => new { Handler = h, Attribute = h.GetType().GetCustomAttribute<TextMessageHandlerAttribute>() })
-				.Where(x => x.Attribute != null)
-				.ToDictionary(x => x.Attribute!.Text, x => x.Handler);
-		}
+		//private readonly Dictionary<string, IMessageHandler> _handlers;
+		//public TelegramController(IEnumerable<IMessageHandler> handlers) {
+		//	_handlers = handlers
+		//		.Select(h => new { Handler = h, Attribute = h.GetType().GetCustomAttribute<TextMessageHandlerAttribute>() })
+		//		.Where(x => x.Attribute != null)
+		//		.ToDictionary(x => x.Attribute!.Text, x => x.Handler);
+		//}
 
 		[HttpPost("update")]
 		public async Task<IActionResult> Update(Update request) {
-			if (request == null) {
-				return Ok();
-			}
+			//if (request == null) {
+			//	return Ok();
+			//}
 
-			var text = request?.Message?.Text;
-			if (string.IsNullOrEmpty(text)) {
-				return Ok();
-			}
+			//var text = request?.Message?.Text;
+			//if (string.IsNullOrEmpty(text)) {
+			//	return Ok();
+			//}
 
-			if (_handlers.TryGetValue(text, out var handler)) {
-				await handler.ExecuteAsync(request!);
-			}
+			//if (_handlers.TryGetValue(text, out var handler)) {
+			//	await handler.ExecuteAsync(request!);
+			//}
 			return Ok();
 		}
 	}
