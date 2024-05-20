@@ -1,8 +1,8 @@
 ﻿using ExchangeOffice.Application.Attributes;
+using ExchangeOffice.Application.Extensions.Providers.Interfaces;
 using ExchangeOffice.Cache.Clients.Interfaces;
 using ExchangeOffice.Common.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Newtonsoft.Json;
 using System.Reflection;
 using Telegram.Bot.Types;
@@ -10,13 +10,15 @@ using Telegram.Bot.Types;
 public class StepperMiddleware {
 	private readonly RequestDelegate _next;
 	private readonly ICacheClient _cache;
+	private readonly IManagerProvider _managerProvider;
 
-	public StepperMiddleware(RequestDelegate next, ICacheClient cacheClient) {
+	public StepperMiddleware(RequestDelegate next, ICacheClient cacheClient, IManagerProvider managerProvider) {
 		_next = next;
 		_cache = cacheClient;
+		_managerProvider = managerProvider;
 	}
 
-	public async Task InvokeAsync(HttpContext context, IServiceProvider provider) {
+	public async Task InvokeAsync(HttpContext context) {
 		context.Request.EnableBuffering();
 		var update = await GetUpdateFromRequest(context.Request.Body);
         if (update == null) {
@@ -28,7 +30,7 @@ public class StepperMiddleware {
 			return;
 		}
 
-		var stepInfoJson = _cache.Get(userStepper);
+		var stepInfoJson = await _cache.GetAsync(userStepper);
 		if (!string.IsNullOrEmpty(stepInfoJson)) {
 			var stepInfo = JsonConvert.DeserializeObject<StepperInfo>(stepInfoJson);
 			if (stepInfo == null) {
@@ -41,16 +43,13 @@ public class StepperMiddleware {
 		await _next(context);
 	}
 
-	private void DeleteFinishedStep(string key) {
-		_cache.Delete(key);
-	}
-
-	private void IncrementStep(string key, StepperInfo info) {
+	private async Task IncrementStep(string key, StepperInfo info) {
 		if (++info.CurrentStep >= info.StepsCount) {
-			DeleteFinishedStep(key);
+			await _cache.DeleteAsync(key);
+			return;
 		}
 		var json = JsonConvert.SerializeObject(info);
-		_cache.Set(key, json);
+		await _cache.SetAsync(key, json);
 	}
 
 	private async Task ExecuteTextHandlerNextStep(Update request, StepperInfo info) {
@@ -67,9 +66,9 @@ public class StepperMiddleware {
 				foreach (var attribute in attributes) {
 					var typedAttribute = (TextStepperAttribute)attribute;
 					if (typedAttribute.Name == info.Name && typedAttribute.Step == info.CurrentStep + 1) {
-						var instance = Activator.CreateInstance(type);
+						var instance = Activator.CreateInstance(type, _managerProvider);
 						await Task.FromResult(method.Invoke(instance, new[] { request }));
-						IncrementStep(stepperKey, info);
+						await IncrementStep(stepperKey, info);
 					}
 				}
 			}
