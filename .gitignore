@@ -30,7 +30,6 @@
 *.tlb
 *.tlh
 *.bak
-*.cache
 *.ilk
 *.log
 *.npm-debug.log
