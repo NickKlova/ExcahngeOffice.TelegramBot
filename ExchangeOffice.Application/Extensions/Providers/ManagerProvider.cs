@@ -1,16 +1,22 @@
 ﻿using ExchangeOffice.Application.Extensions.Providers.Interfaces;
 using ExchangeOffice.Application.Managers.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Telegram.Bot;
 
 namespace ExchangeOffice.Application.Extensions.Providers {
 	public class ManagerProvider : IManagerProvider {
 		private readonly IServiceProvider _serviceProvider;
 		public ManagerProvider(IServiceProvider serviceProvider) {
 			_serviceProvider = serviceProvider;
+		}
+
+		public ITelegramBotClient GetTelegramBotClient() {
+			var manager = _serviceProvider.GetService(typeof(ITelegramBotClient));
+			if (manager == null) {
+				throw new Exception("test");
+			}
+
+			var typedManager = (ITelegramBotClient)manager;
+			return typedManager;
 		}
 
 		public IContactManager GetContactManager() {

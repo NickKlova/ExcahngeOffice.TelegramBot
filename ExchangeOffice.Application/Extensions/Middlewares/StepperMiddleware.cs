@@ -43,15 +43,6 @@ public class StepperMiddleware {
 		await _next(context);
 	}
 
-	private async Task IncrementStep(string key, StepperInfo info) {
-		if (++info.CurrentStep >= info.StepsCount) {
-			await _cache.DeleteAsync(key);
-			return;
-		}
-		var json = JsonConvert.SerializeObject(info);
-		await _cache.SetAsync(key, json);
-	}
-
 	private async Task ExecuteTextHandlerNextStep(Update request, StepperInfo info) {
 		var stepperKey = GetUserStepper(request);
 		if (string.IsNullOrEmpty(stepperKey))
@@ -65,10 +56,9 @@ public class StepperMiddleware {
 				var attributes = method.GetCustomAttributes(typeof(TextStepperAttribute), false);
 				foreach (var attribute in attributes) {
 					var typedAttribute = (TextStepperAttribute)attribute;
-					if (typedAttribute.Name == info.Name && typedAttribute.Step == info.CurrentStep + 1) {
+					if (typedAttribute.Name == info.Name && typedAttribute.Step == info.CurrentStep) {
 						var instance = Activator.CreateInstance(type, _managerProvider);
 						await Task.FromResult(method.Invoke(instance, new[] { request }));
-						await IncrementStep(stepperKey, info);
 					}
 				}
 			}
