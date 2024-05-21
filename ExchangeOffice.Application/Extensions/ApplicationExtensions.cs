@@ -14,6 +14,7 @@ namespace ExchangeOffice.Core.Extensions {
 	public static class ApplicationExtensions {
 		public static void AddApplicationLayer(this IServiceCollection services) {
 			services.AddCacheLayer();
+			services.AddCoreLayer();
 			var assembly = Assembly.GetExecutingAssembly();
 			var handlerTypes = assembly.GetTypes()
 				.Where(t => t.GetCustomAttributes(typeof(TextMessageHandlerAttribute), true).Length > 0);

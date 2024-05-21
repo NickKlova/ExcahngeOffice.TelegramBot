@@ -45,6 +45,7 @@ namespace ExchangeOffice.Application.Handlers.Messages {
 			}
 
 			await _bot.SendTextMessageAsync(chatId, "Enter your phone number:", replyMarkup: MainMenu.Buttons);
+			//await _contactManager.FillFullnameAsync()
 			await NextOrFinishStepAsync(chatId);    
 		}
 

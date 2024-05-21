@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ExchangeOffice.Cache\ExchangeOffice.Cache.csproj" />
     <ProjectReference Include="..\ExchangeOffice.Common\ExchangeOffice.Common.csproj" />
+    <ProjectReference Include="..\ExchangeOffice.Core\ExchangeOffice.Core.csproj" />
   </ItemGroup>
 
 </Project>

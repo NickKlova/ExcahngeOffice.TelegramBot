@@ -1,46 +1,51 @@
 ﻿using ExchangeOffice.Application.Managers.Interfaces;
 using ExchangeOffice.Cache.Clients.Interfaces;
 using ExchangeOffice.Common.Models;
+using ExchangeOffice.Core.Clients.Interfaces;
 using Newtonsoft.Json;
 
 namespace ExchangeOffice.Application.Managers {
 	public class ContactManager : IContactManager {
 		private readonly ICacheClient _cache;
-		public ContactManager(ICacheClient cache) {
+		private readonly string _uniq = "contactmanager";
+		private readonly IContactService _service;
+		public ContactManager(ICacheClient cache, IContactService service) {
 			_cache = cache;
+			_service = service;
 		}
 
-		public async Task DeleteStepperAsync(object key) {
-			var stringKey = key.ToString();
-			if (string.IsNullOrEmpty(stringKey)) {
-				return;
-			}
-			await _cache.DeleteAsync(stringKey);
+		public async Task FillFullnameAsync(string chatId, string fullName) {
+			var contactEntity = new ContactDto();
+			contactEntity.FullName = fullName;
+			var json = JsonConvert.SerializeObject(contactEntity);
+
+			var key = chatId + _uniq;
+			await _cache.SetAsync(key, json);
 		}
 
-		public async Task NextOrFinishStepAsync(object key, StepperInfo? value = null) {
-			var stringKey = key.ToString();
-			if(string.IsNullOrEmpty(stringKey)) {
-				return;
-			}
-			if (value == null) {
-				var valueJson = await _cache.GetAsync(stringKey);
-				if (valueJson == null) {
-					return;
-				}
-				value = JsonConvert.DeserializeObject<StepperInfo>(valueJson);
-			}
-			value!.CurrentStep++;
-			if (value.CurrentStep > value.StepsCount) {
-				await _cache.DeleteAsync(stringKey);
-				return;
-			}
-			var jsonValue = JsonConvert.SerializeObject(value);
-			await _cache.SetAsync(stringKey, jsonValue);
+		public async Task FillEmailAsync(string chatId, string email) {
+			var key = chatId + _uniq;
+			var json = await _cache.GetAsync(key);
+			var contactEntity = JsonConvert.DeserializeObject<ContactDto>(json);
+			contactEntity.Email = email;
+			var contactjson = JsonConvert.SerializeObject(contactEntity);
+			await _cache.SetAsync(key, contactjson);
 		}
 
-		public void SetData(string id, string str) {
-			_cache.SetAsync(id, str).Wait();
+		public async Task FillPhoneAsync(string chatId, string phone) {
+			var key = chatId + _uniq;
+			var json = await _cache.GetAsync(key);
+			var contactEntity = JsonConvert.DeserializeObject<ContactDto>(json);
+			contactEntity.Phone = phone;
+			var contactjson = JsonConvert.SerializeObject(contactEntity);
+			await _cache.SetAsync(key, contactjson);
+		}
+
+		public async Task CreateContactAsync(string chatId) {
+			var key = chatId + _uniq;
+			var json = await _cache.GetAsync(key);
+			var contactEntity = JsonConvert.DeserializeObject<ContactDto>(json);
+			await _service.CreateContactAsync(contactEntity);
 		}
 	} 
 }
