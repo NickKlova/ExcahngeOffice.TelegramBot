@@ -2,18 +2,16 @@
 
 namespace ExchangeOffice.Application.Views.InlineMarkups {
 	public static class RatesMenu {
-        public static InlineKeyboardMarkup GetButtons(IDictionary<string, string> values) {
-			var kbButtons = new List<List<InlineKeyboardButton>>();
-
-			var list = new List<InlineKeyboardButton>();
+		public static InlineKeyboardMarkup GetKeyboard(IDictionary<string, string> values) {
+			var keyboard = new List<List<InlineKeyboardButton>>();
 			foreach (var key in values.Keys) {
-                var value = values[key];
+				var row = new List<InlineKeyboardButton>();
+				var value = values[key];
                 var button = InlineKeyboardButton.WithCallbackData(text: value, callbackData: key);
-                list.Add(button);
+                row.Add(button);
+				keyboard.Add(row);
             }
-            kbButtons.Add(list);
-			InlineKeyboardMarkup keyboard = new(kbButtons);
-            return keyboard;
+			return new InlineKeyboardMarkup(keyboard);
 		}
 	}
 }

@@ -2,11 +2,6 @@
 using ExchangeOffice.Core.Services.Abstractions;
 using ExchangeOffice.Core.Services.Interfaces;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExchangeOffice.Core.Services {
 	public class RateService : BaseService, IRateService {
