@@ -3,6 +3,7 @@ using ExchangeOffice.Application.Handlers.Messages.Interfaces;
 using ExchangeOffice.Common.Models;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using System;
 using System.Reflection;
 using Telegram.Bot.Requests.Abstractions;
 using Telegram.Bot.Types;
@@ -39,8 +40,11 @@ namespace ExchangeOffice.Application.Extensions.Middlewares {
 			}
 
 			var callback = update?.CallbackQuery?.Data;
-			if(!string.IsNullOrEmpty(callback) && _callbackHandlers.TryGetValue(callback, out var callbackHandler)) {
-				await callbackHandler.ExecuteAsync(update!);
+			if(!string.IsNullOrEmpty(callback)) {
+				var searcher = callback.Contains('|') ? callback.Substring(0, callback.IndexOf('|')) : callback;
+				if (!string.IsNullOrEmpty(callback) && _callbackHandlers.TryGetValue(searcher, out var callbackHandler)) {
+					await callbackHandler.ExecuteAsync(update!);
+				}
 			}
 
 			await _next(context);

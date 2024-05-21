@@ -7,5 +7,6 @@ namespace ExchangeOffice.Application.Extensions.Providers.Interfaces {
 		public IContactManager GetContactManager();
 		public ITelegramBotClient GetTelegramBotClient();
 		public ICacheClient GetCacheClient();
+		public IRateManager GetRateManager();
 	}
 }

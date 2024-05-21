@@ -5,7 +5,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace ExchangeOffice.Application.Handlers {
-	[CallbackMessageHandler("str")]
+	[CallbackMessageHandler("acceptedcurrency")]
 	public class AcceptedCurrenciesMessageHandler : ICallbackMessageHandler {
 		private readonly ITelegramBotClient _bot;
 		public AcceptedCurrenciesMessageHandler(IManagerProvider provider) {

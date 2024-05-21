@@ -1,26 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Bot.Types.ReplyMarkups;
+﻿using Telegram.Bot.Types.ReplyMarkups;
 
 namespace ExchangeOffice.Application.Views.InlineMarkups {
 	public static class RatesMenu {
-		public static readonly InlineKeyboardMarkup Buttons = new (new[]
-        {
-            // first row
-            new []
-            {
-                InlineKeyboardButton.WithCallbackData(text: "Accepted currencies", callbackData: "str"),
-                InlineKeyboardButton.WithCallbackData(text: "usd", callbackData: "12"),
-            },
-            // second row
-            new []
-            {
-                InlineKeyboardButton.WithCallbackData(text: "btc", callbackData: "21"),
-                InlineKeyboardButton.WithCallbackData(text: "eur", callbackData: "22"),
-            },
-        });
+        public static InlineKeyboardMarkup GetButtons(IDictionary<string, string> values) {
+			var kbButtons = new List<List<InlineKeyboardButton>>();
+
+			var list = new List<InlineKeyboardButton>();
+			foreach (var key in values.Keys) {
+                var value = values[key];
+                var button = InlineKeyboardButton.WithCallbackData(text: value, callbackData: key);
+                list.Add(button);
+            }
+            kbButtons.Add(list);
+			InlineKeyboardMarkup keyboard = new(kbButtons);
+            return keyboard;
+		}
 	}
 }

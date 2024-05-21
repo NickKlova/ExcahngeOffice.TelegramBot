@@ -35,6 +35,7 @@ namespace ExchangeOffice.Core.Extensions {
 				}
 			}
 			services.AddSingleton<IContactManager, ContactManager>();
+			services.AddSingleton<IRateManager, RateManager>();
 			services.AddSingleton<IManagerProvider, ManagerProvider>();
 		}
 

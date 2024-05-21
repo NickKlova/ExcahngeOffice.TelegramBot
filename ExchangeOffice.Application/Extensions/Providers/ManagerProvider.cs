@@ -39,5 +39,15 @@ namespace ExchangeOffice.Application.Extensions.Providers {
 			var typedManager = (IContactManager)manager;
 			return typedManager;
 		}
+
+		public IRateManager GetRateManager() {
+			var manager = _serviceProvider.GetService(typeof(IRateManager));
+			if (manager == null) {
+				throw new Exception("test");
+			}
+
+			var typedManager = (IRateManager)manager;
+			return typedManager;
+		}
 	}
 }
