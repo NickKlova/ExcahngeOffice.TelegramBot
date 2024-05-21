@@ -1,5 +1,6 @@
 ﻿using ExchangeOffice.Application.Extensions.Providers.Interfaces;
 using ExchangeOffice.Application.Managers.Interfaces;
+using ExchangeOffice.Cache.Clients.Interfaces;
 using Telegram.Bot;
 
 namespace ExchangeOffice.Application.Extensions.Providers {
@@ -7,6 +8,16 @@ namespace ExchangeOffice.Application.Extensions.Providers {
 		private readonly IServiceProvider _serviceProvider;
 		public ManagerProvider(IServiceProvider serviceProvider) {
 			_serviceProvider = serviceProvider;
+		}
+
+		public ICacheClient GetCacheClient() {
+			var manager = _serviceProvider.GetService(typeof(ICacheClient));
+			if (manager == null) {
+				throw new Exception("test");
+			}
+
+			var typedManager = (ICacheClient)manager;
+			return typedManager;
 		}
 
 		public ITelegramBotClient GetTelegramBotClient() {
