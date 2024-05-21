@@ -10,11 +10,16 @@ using Telegram.Bot.Types;
 namespace ExchangeOffice.Application.Extensions.Middlewares {
 	public class HandlersMiddleware {
 		private readonly RequestDelegate _next;
-		private readonly Dictionary<string, IMessageHandler> _handlers;
-		public HandlersMiddleware(RequestDelegate next, IEnumerable<IMessageHandler> handlers) {
+		private readonly Dictionary<string, ITextMessageHandler> _handlers;
+		private readonly Dictionary<string, ICallbackMessageHandler> _callbackHandlers;
+		public HandlersMiddleware(RequestDelegate next, IEnumerable<ITextMessageHandler> handlers, IEnumerable<ICallbackMessageHandler> cbHandlers) {
 			_next = next;
 			_handlers = handlers
 				.Select(h => new { Handler = h, Attribute = h.GetType().GetCustomAttribute<TextMessageHandlerAttribute>() })
+				.Where(x => x.Attribute != null)
+				.ToDictionary(x => x.Attribute!.Text, x => x.Handler);
+			_callbackHandlers = cbHandlers
+				.Select(h => new { Handler = h, Attribute = h.GetType().GetCustomAttribute<CallbackMessageHandlerAttribute>() })
 				.Where(x => x.Attribute != null)
 				.ToDictionary(x => x.Attribute!.Text, x => x.Handler);
 		}
@@ -28,13 +33,14 @@ namespace ExchangeOffice.Application.Extensions.Middlewares {
 			}
 
 			var text = update?.Message?.Text;
-			if (string.IsNullOrEmpty(text)) {
-				return;
-			}
-
-			if (_handlers.TryGetValue(text, out var handler)) {
+			if (!string.IsNullOrEmpty(text) && _handlers.TryGetValue(text, out var handler)) {
 				await handler.ExecuteAsync(update!);
 				context.Request.Headers["handlerexecuted"] = "yes";
+			}
+
+			var callback = update?.CallbackQuery?.Data;
+			if(!string.IsNullOrEmpty(callback) && _callbackHandlers.TryGetValue(callback, out var callbackHandler)) {
+				await callbackHandler.ExecuteAsync(update!);
 			}
 
 			await _next(context);

@@ -11,7 +11,7 @@ using Telegram.Bot.Types;
 
 namespace ExchangeOffice.Application.Handlers.Messages {
 	[TextMessageHandler(MenuTitles.MyContact)]
-	public class ContactMessageHandler : BaseMessageHandler, IMessageHandler {
+	public class ContactMessageHandler : BaseMessageHandler, ITextMessageHandler {
 		private readonly ITelegramBotClient _bot;
 		private readonly IContactManager _contactManager;
 		public ContactMessageHandler(IManagerProvider managerProvider) : base(managerProvider) {

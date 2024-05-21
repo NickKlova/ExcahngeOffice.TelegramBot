@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\InlineMarkups\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ExchangeOffice.Cache\ExchangeOffice.Cache.csproj" />
     <ProjectReference Include="..\ExchangeOffice.Common\ExchangeOffice.Common.csproj" />
   </ItemGroup>

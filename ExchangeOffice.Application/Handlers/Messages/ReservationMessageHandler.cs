@@ -12,7 +12,7 @@ using Telegram.Bot.Types;
 
 namespace ExchangeOffice.Application.Handlers.Messages {
 	[TextMessageHandler(MenuTitles.Reservations)]
-	public class ReservationMessageHandler : BaseMessageHandler, IMessageHandler {
+	public class ReservationMessageHandler : BaseMessageHandler, ITextMessageHandler {
 		private readonly ITelegramBotClient _bot;
 		private readonly IContactManager _contactManager;
 		public ReservationMessageHandler(IManagerProvider managerProvider) : base(managerProvider) {

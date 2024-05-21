@@ -21,7 +21,16 @@ namespace ExchangeOffice.Core.Extensions {
 			foreach (var handlerType in handlerTypes) {
 				var attribute = handlerType.GetCustomAttribute<TextMessageHandlerAttribute>();
 				if (attribute != null) {
-					services.AddSingleton(typeof(IMessageHandler), handlerType);
+					services.AddSingleton(typeof(ITextMessageHandler), handlerType);
+				}
+			}
+			var callbackTypes = assembly.GetTypes()
+				.Where(t => t.GetCustomAttributes(typeof(CallbackMessageHandlerAttribute), true).Length > 0);
+
+			foreach (var handlerType in callbackTypes) {
+				var attribute = handlerType.GetCustomAttribute<CallbackMessageHandlerAttribute>();
+				if (attribute != null) {
+					services.AddSingleton(typeof(ICallbackMessageHandler), handlerType);
 				}
 			}
 			services.AddSingleton<IContactManager, ContactManager>();
