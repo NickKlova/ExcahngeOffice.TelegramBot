@@ -10,5 +10,7 @@ namespace ExchangeOffice.Application.Managers.Interfaces {
 		public Task FillPhoneAsync(string chatId, string phone);
 
 		public Task CreateContactAsync(string chatId);
+
+		public Task<ContactDto> GetContactAsync(string chatId);
+		}
 	}
-}

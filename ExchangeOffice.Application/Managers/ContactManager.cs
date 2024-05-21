@@ -45,7 +45,11 @@ namespace ExchangeOffice.Application.Managers {
 			var key = chatId + _uniq;
 			var json = await _cache.GetAsync(key);
 			var contactEntity = JsonConvert.DeserializeObject<ContactDto>(json);
-			await _service.CreateContactAsync(contactEntity);
+			await _service.CreateContactAsync(chatId, contactEntity);
+		}
+
+		public async Task<ContactDto> GetContactAsync(string chatId) {
+			return await _service.GetContactAsync(chatId);
 		}
 	} 
 }
