@@ -17,5 +17,16 @@ namespace ExchangeOffice.Core.Services.Abstractions {
 				return string.Empty;
 			}
 		}
+
+		public async Task<string> GetAsync(string url) {
+			using (HttpClient client = new HttpClient()) {
+				var response = await client.GetAsync(url);
+				if (response.IsSuccessStatusCode) {
+					string responseBody = await response.Content.ReadAsStringAsync();
+					return responseBody;
+				}
+				return string.Empty;
+			}
+		}
 	}
 }
