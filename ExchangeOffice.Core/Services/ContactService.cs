@@ -14,16 +14,13 @@ namespace ExchangeOffice.Core.Clients {
 			_mapper = mapper;
 			_cache = cache;
 		}
-		public async Task<ContactDto> CreateContactAsync(string cacheId, ContactDto data) {
+		public async Task<ContactDto?> CreateContactAsync(string cacheId, ContactDto data) {
 			var dao = _mapper.Map<Contact>(data);
 			dao.IsBlacklist = false;
-			var response = await PostAsync("http://localhost:5034/api/contact/create/", dao);
-			if (response == null) {
-				throw new Exception("test");
-			}
+			var response = await PostAsync("api/contact/create/", dao);
 			var resultData = JsonConvert.DeserializeObject<ContactDto>(response);
 			if (resultData == null) {
-				throw new Exception("");
+				return null;
 			}
 			await _cache.SetAsync($"ContactId:{cacheId}", resultData.Id.ToString());
 			return resultData; 
@@ -39,7 +36,7 @@ namespace ExchangeOffice.Core.Clients {
 			if (!string.IsNullOrEmpty(chachedData)) {
 				return JsonConvert.DeserializeObject<ContactDto>(chachedData);
 			}
-			var json = await GetAsync($"http://localhost:5034/api/contact/get?id={contactId}");
+			var json = await GetAsync($"/api/contact/get?id={contactId}");
 			await _cache.SetAsync(chacheId, json);
 			return JsonConvert.DeserializeObject<ContactDto>(json);
 		}

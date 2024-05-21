@@ -3,7 +3,10 @@ using System.Text;
 
 namespace ExchangeOffice.Core.Services.Abstractions {
 	public abstract class BaseService {
-		public async Task<string> PostAsync(string url, object data) {
+		private readonly string _host = "http://localhost:5034/";
+
+		public async Task<string> PostAsync(string endpoint, object data) {
+			var url = _host + endpoint;
 			var body = JsonConvert.SerializeObject(data);
 			using (HttpClient client = new HttpClient()) {
 				StringContent content = new StringContent(body, Encoding.UTF8, "application/json");
@@ -18,7 +21,8 @@ namespace ExchangeOffice.Core.Services.Abstractions {
 			}
 		}
 
-		public async Task<string> GetAsync(string url) {
+		public async Task<string> GetAsync(string endpoint) {
+			var url = _host + endpoint;
 			using (HttpClient client = new HttpClient()) {
 				var response = await client.GetAsync(url);
 				if (response.IsSuccessStatusCode) {
