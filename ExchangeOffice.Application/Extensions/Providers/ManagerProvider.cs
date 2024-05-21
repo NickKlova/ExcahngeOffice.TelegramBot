@@ -49,5 +49,15 @@ namespace ExchangeOffice.Application.Extensions.Providers {
 			var typedManager = (IRateManager)manager;
 			return typedManager;
 		}
+
+		public IReservationManager GetReservationManager() {
+			var manager = _serviceProvider.GetService(typeof(IReservationManager));
+			if (manager == null) {
+				throw new Exception("test");
+			}
+
+			var typedManager = (IReservationManager)manager;
+			return typedManager;
+		}
 	}
 }

@@ -6,7 +6,7 @@ namespace ExchangeOffice.Application.Views.ReplyMarkups {
 		public static readonly ReplyKeyboardMarkup Buttons = new(
 		new[] {
 			new KeyboardButton[] { MenuTitles.MyReservations },
-			new KeyboardButton[] { MenuTitles.Reservations },
+			new KeyboardButton[] { MenuTitles.NewReservation },
 			new KeyboardButton[] { MenuTitles.Back }
 		}) { ResizeKeyboard = true };
 	}

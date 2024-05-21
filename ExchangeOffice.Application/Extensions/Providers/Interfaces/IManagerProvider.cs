@@ -8,5 +8,6 @@ namespace ExchangeOffice.Application.Extensions.Providers.Interfaces {
 		public ITelegramBotClient GetTelegramBotClient();
 		public ICacheClient GetCacheClient();
 		public IRateManager GetRateManager();
+		public IReservationManager GetReservationManager();
+		}
 	}
-}
