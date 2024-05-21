@@ -1,5 +1,4 @@
 ﻿using ExchangeOffice.Common.Models;
-using Newtonsoft.Json;
 
 namespace ExchangeOffice.Application.Managers.Interfaces {
 	public interface IContactManager {

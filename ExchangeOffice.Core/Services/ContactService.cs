@@ -36,7 +36,8 @@ namespace ExchangeOffice.Core.Clients {
 			if (!string.IsNullOrEmpty(chachedData)) {
 				return JsonConvert.DeserializeObject<ContactDto>(chachedData);
 			}
-			var json = await GetAsync($"/api/contact/get?id={contactId}");
+			var json = await GetAsync($"api/contact/get?id={contactId}");
+			if (string.IsNullOrEmpty(json)) { return null; }
 			await _cache.SetAsync(chacheId, json);
 			return JsonConvert.DeserializeObject<ContactDto>(json);
 		}

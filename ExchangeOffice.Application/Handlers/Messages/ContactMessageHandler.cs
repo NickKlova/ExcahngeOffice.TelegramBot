@@ -27,6 +27,17 @@ namespace ExchangeOffice.Application.Handlers.Messages {
 			if (chatId == null) {
 				return;
 			}
+			var key = chatId.ToString();
+			if(string.IsNullOrEmpty(key)) { 
+				return; 
+			}
+			var contact = await _contactManager.GetContactAsync(key);
+			if(contact != null) {
+				var registeredContactMessage = GetRegisteredContactMessageText(contact);
+				await _bot.SendTextMessageAsync(chatId, registeredContactMessage, replyMarkup: MainMenu.Buttons);
+				return;
+			}
+
 			var config = new StepperInfo() {
 				CurrentStep = 1,
 				StepsCount = 4,
@@ -43,9 +54,14 @@ namespace ExchangeOffice.Application.Handlers.Messages {
 			if (chatId == null) {
 				return;
 			}
+			var key = chatId.ToString();
+			if (string.IsNullOrEmpty(key)) {
+				return;
+			}
 
+			var text = request?.Message?.Text;
+			await _contactManager.FillFullnameAsync(key, text);
 			await _bot.SendTextMessageAsync(chatId, "Enter your phone number:", replyMarkup: MainMenu.Buttons);
-			//await _contactManager.FillFullnameAsync()
 			await NextOrFinishStepAsync(chatId);    
 		}
 
@@ -55,7 +71,13 @@ namespace ExchangeOffice.Application.Handlers.Messages {
 			if (chatId == null) {
 				return;
 			}
+			var key = chatId.ToString();
+			if (string.IsNullOrEmpty(key)) {
+				return;
+			}
 
+			var text = request?.Message?.Text;
+			await _contactManager.FillPhoneAsync(key, text);
 			await _bot.SendTextMessageAsync(chatId, "Enter your email:", replyMarkup: MainMenu.Buttons);
 			await NextOrFinishStepAsync(chatId);
 		}
@@ -66,9 +88,24 @@ namespace ExchangeOffice.Application.Handlers.Messages {
 			if (chatId == null) {
 				return;
 			}
-
-			await _bot.SendTextMessageAsync(chatId, "Success", replyMarkup: MainMenu.Buttons);
+			var key = chatId.ToString();
+			if (string.IsNullOrEmpty(key)) {
+				return;
+			}
+			var msg = await _bot.SendTextMessageAsync(chatId, "Wait a moment!", replyMarkup: MainMenu.Buttons);
+			var text = request?.Message?.Text;
+			await _contactManager.FillEmailAsync(key, text);
+			await _contactManager.CreateContactAsync(key);
+			await _bot.DeleteMessageAsync(chatId, msg.MessageId);
+			await _bot.SendTextMessageAsync(chatId, "Successfully register your contact!", replyMarkup: MainMenu.Buttons);
 			await NextOrFinishStepAsync(chatId);
+		}
+
+		private string GetRegisteredContactMessageText(ContactDto entity) {
+			return $"Unique contact key: {entity.Id}\n" +
+				$"Full name: {entity.FullName}\n" +
+				$"Email: {entity.Email}\n" +
+				$"Phone: {entity.Phone}\n"; 
 		}
 	}
 }
